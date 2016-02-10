@@ -1,35 +1,40 @@
-{#
-<pre>Type: {{ type }}</pre>
-<pre>Env: {{ environment }}</pre>
-<pre>Param: {{ param }}</pre>
-
-<pre>Version: {{ version }}</pre>
-<pre>------- Cache --------</pre>
-<pre>Key: {{ key }}</pre>
-<pre>Minutes: {{ minutes }}</pre>
-<pre>Env: {{ cache_env }}</pre>
-<pre>Type: {{ cache_type }}</pre>
-<pre>Url: {{ url }}</pre>
-<pre>Value: {{ value }}</pre>
-<pre>------- SEO ----------</pre>
-<pre>Head: {{ SEO_head }}</pre>	
-#}
+{% if debug %}
+	<h4>Plugin</h4>
+	<pre>Param: {{ param }}</pre>
+	<pre>Domain: {{ domain }}</pre>
+	<pre>Ver Server: {{ versionserver }}</pre>
+	<pre>CDN Server: {{ cdnserver }}</pre>
+	<pre>SEO Server: {{ seoserver }}</pre>
+	<pre>Feedlimit: {{ feedlimit }}</pre>
+	<pre>Tag: {{ tag }}</pre>
+	<hr>
+	<h4>CDN version</h4>
+	<pre>Version: {{ version }}</pre>
+	<hr>
+	<h4>Cache</h4>
+	<pre>Fetch from server: {{ readFromServer }}</pre>
+	<pre>SEO URL: {{ url }}</pre>
+	<pre>Status: {{ status }}</pre>
+	<pre>Key: {{ key }}</pre>
+	<pre>Duration: {{ duration }}</pre>
+	<hr>
+	<pre>Head: {{ SEO_head }}</pre>
+	<pre>Body: {{ SEO_body }}</pre>
+	<hr>
+{% endif %}
 
 {# Magazine Integration ----------- #}
 
-{% if integration == 'snippet' %}
-    {{ Preloader|raw }}
-{% else %}
     {% put head %}
         {{ Script|raw }}
         {{ Styles|raw }}
     {% endput %}
     <div id="stylaMagazine" {% if feedlimit %}data-feedlimit="{{ feedlimit }}"{% endif %}></div>
-{% endif %}
 
 {# SEO content -------------------- #}
 
 {% put head %}
     {{ SEO_head|raw }}
 {% endput %}
+
 {{ SEO_body|raw }}

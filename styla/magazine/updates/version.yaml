@@ -10,3 +10,8 @@
     - Added root magazine file caching for SEO data
     - Introducing helper functions for caching
     - Introducing Environment setting (switch between staging and test)
+1.5.0:
+    - Flexible server URLs (with validation)
+    - Now using the default caching system set in config/cache.php
+    - Cache expiration now set via SEO API
+    - Only two pages required now - one for the magazine /rootPath and one wildcard rootPath/*

@@ -1,7 +1,7 @@
 <?php namespace Styla\Magazine\Components;
 
 use Cms\Classes\ComponentBase;
-use Request;
+use Redirect;
 use Cache;
 
 class Magazine extends ComponentBase
@@ -22,205 +22,186 @@ class Magazine extends ComponentBase
                 'description'       => 'Domain of the magazine.',
                 'title'             => 'Domain',
                 'default'           => '',
-                'type'              => 'string'
+                'type'              => 'string',
+                'showExternalParam' => false
             ],
-            'type' => [
-                'description'       => 'Type of content to be fetched.',
-                'title'             => 'Type',
-                'default'           => 'magazine',
-                'type'              => 'dropdown',
-                'options'           => ['magazine' => 'Magazine', 'story' => 'Story', 'tag' => 'Tag']
+            'cdnserver' => [
+                'description'       => 'Server that delivers the script and styles for the magazine.',
+                'title'             => 'CDN server',
+                'default'           => 'http://cdn.styla.com/',
+                'type'              => 'string',
+                'validationPattern' => '(https?:\/\/)([\da-z\.-]+)([\/\w \.-]*)*\/',
+                'validationMessage' => 'URL must begin with http(s):// and end with a trailing slash',
+                'required'			=> true,
+                'showExternalParam' => false
             ],
-            'integration' => [
-                'description'       => 'Snippet or CDN Integration switch.',
-                'title'             => 'Integration',
-                'default'           => 'snippet',
-                'type'              => 'dropdown',
-                'options'           => ['snippet' => 'Snippet', 'cdn' => 'CDN']
+            'seoserver' => [
+                'description'       => 'Server that delivers SEO information for the magazine.',
+                'title'             => 'SEO server',
+                'default'           => 'http://seo.styla.com/clients/',
+                'type'              => 'string',
+                'validationPattern' => '(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/',
+                'validationMessage' => 'URL must begin with http(s):// and end with a trailing slash',
+                'required'			=> true,
+                'showExternalParam' => false
+            ],
+            'versionserver' => [
+	        	'description'		=> 'Server that delivers the current script and styles version number',
+	        	'title'				=> 'Version server',
+	        	'default'			=> 'http://live.styla.com/api/version/',
+	        	'type'				=> 'string',
+	        	'validationPattern' => '(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/',
+                'validationMessage' => 'URL must begin with http(s):// and end with a trailing slash',
+                'required'			=> true,
+                'showExternalParam' => false
             ],
             'feedlimit' => [
                 'description'       => 'Numbers of pages to be displayed.',
                 'title'             => 'Feedlimit (optional)',
                 'default'           => '',
-                'type'              => 'string'
-            ],
-            'duration' => [
-                'description'       => 'Duration in minutes.',
-                'title'             => 'Caching duration',
-                'default'           => 20,
                 'type'              => 'string',
-                'required'			=> true,
                 'validationPattern' => '^[0-9]+$',
-				'validationMessage' => 'The Duration property can contain only numeric symbols'
+				'validationMessage' => 'The Feedlimit property can contain only numeric symbols',
+				'showExternalParam' => false
             ],
-            'environment' => [
-	            'description'       => 'Source of the magazine domain. Stage only works with Snippet integration',
-                'title'             => 'Environment',
-                'default'           => 'live',
-                'type'              => 'dropdown',
-                'depends'     		=> ['integration'],
-                'options'           => ['live' => 'Live', 'stage' => 'Stage']
+            'tag' => [
+                'description'       => 'Display only stories with the specified Tag.',
+                'title'             => 'Tag (optional)',
+                'default'           => '',
+                'type'              => 'string',
+                'showExternalParam' => false
+            ],
+            'debug' => [
+                'description'       => 'Displays DEBUG information above the magazine.',
+                'title'             => 'Debug',
+                'default'           => false,
+                'type'              => 'checkbox',
+                'showExternalParam' => false
             ],
         ];
     }
-    
-    public function getEnvironmentOptions()
-	{
-	    $integration = Request::input('integration'); // Load the country property value from POST
-	
-	    $environments = [
-	        'snippet' => ['live'=>'Live', 'stage'=>'Stage'],
-	        'cdn' => ['live'=>'Live']
-	    ];
-	
-	    return $environments[$integration];
-	}
 
     public function onRun()
     {
-        // Pass to page - DEBUG reasons
-        $this->page['domain'] = $this->property('domain');            # styla Username
-        $this->page['type'] = $this->property('type');                # type of the site (set in plugin)
-        $this->page['param'] = $this->param('param');                 # url parameter
-        $this->page['integration'] = $this->property('integration');  # Integration type
-        $this->page['feedlimit'] = $this->property('feedlimit');      # Enable/Disable feedlimit
-        $this->page['duration'] = $this->property('duration');        # Duration for caching
-        $this->page['environment'] = $this->property('environment');  # source for magazine (live.styla.com or stage.styla.com)
-        
-        // --- Create Snippet ---------------------
-        
-        if($this->property('feedlimit')){
-            $this->page['Preloader'] = '<script id="stylaMagazine" src="//'.$this->property('environment').'.styla.com/scripts/preloader/'.$this->property('domain').'.js" data-feedlimit="'.$this->property('feedlimit').'"></script>';
-        }
-        else{
-            $this->page['Preloader'] = '<script id="stylaMagazine" src="//'.$this->property('environment').'.styla.com/scripts/preloader/'.$this->property('domain').'.js"></script>';
-        }
+	    $version = ''; // version of the script and styles received from CDN
+	    $feedlimit = $this->property('feedlimit');
+	    $tag = $this->property('tag');
 
-        // --- Fetch SEO content ----------------------
-        
-        switch($this->property('type')){
-            case 'tag':
-                if($this->param('param') != ""){
-                    $json = $this->fetchAndRemember( $this->property('duration'), $this->property('environment'), 'tag' );
-                    if($json != FALSE){
-                        $obj = json_decode($json);
-                        $this->page['SEO_head'] = $obj->html->head;
-                        $this->page['SEO_body'] = $obj->html->body;
-                    }
-                }
-                break;
+	    // --- Set file_get_contents Timeout to 10s -------
+	    ini_set('default_socket_timeout', 10);
 
-            case 'story':
-                $json = $this->fetchAndRemember( $this->property('duration'), $this->property('environment'), 'story' );
-                if($json != FALSE){
-                    $obj = json_decode($json);
-                    $this->page['SEO_head'] = $obj->html->head;
-                    $this->page['SEO_body'] = $obj->html->body;
-                }
-                break;
+        // --- Get CDN Version ----------------------------
 
-            case 'magazine':
-            	$json = $this->fetchAndRemember( $this->property('duration'), $this->property('environment'), 'magazine' );
-            	if($json != FALSE){
-                    $obj = json_decode($json);
-                    $this->page['SEO_head'] = $obj->html->head;
-                    $this->page['SEO_body'] = $obj->html->body;
-                }
-                break;
-        }
+        $version = $this->fetchAndRememberCdnVersion();
 
-        // --- CDN Version ----------------------------
+        // --- Create CDN code snippets -------------------
 
-        $version = $this->fetchAndRemember( $this->property('duration'), $this->property('environment'), 'version' );
-        $this->page['version'] = $version;
+        $this->page['Styles'] = '<link rel="stylesheet" type="text/css" href="'.$this->property('cdnserver').'styles/clients/'.$this->property('domain').'.css?v='.$version.'">';
 
-        // --- Create CDN code snippets ---------------------------
-        
-        $this->page['Styles'] = '<link rel="stylesheet" type="text/css" href="http://cdn.styla.com/styles/clients/'.$this->property('domain').'.css?v='.$version.'">';
-        
-        if($this->property('feedlimit')){
-            $this->page['Script'] = '<script async src="http://cdn.styla.com/scripts/clients/'.$this->property('domain').'.js?v='.$version.'" data-feedlimit="'.$this->property('feedlimit').'"></script>';
-        }
-        else{
-            $this->page['Script'] = '<script async src="http://cdn.styla.com/scripts/clients/'.$this->property('domain').'.js?v='.$version.'"></script>';
+        $extras = (!empty($feedlimit) ? ' data-feedlimit="'.$feedlimit.'"' : '').
+        		  (!empty($tag) ? ' data-tag="'.$tag.'"' : '');
+
+        $this->page['Script'] = '<script async src="'.$this->property('cdnserver').'scripts/clients/'.$this->property('domain').'.js?v='.$version.'"'.$extras.'></script>';
+
+        // --- Fetch SEO content --------------------------
+
+        $param = $this->param('param') ? $this->param('param') : '/';
+    	$seo = $this->fetchAndRememberSEO( $param );
+
+    	if(is_object( $seo )){
+            if(isset($seo->html->head)) $this->page['SEO_head'] = $seo->html->head;
+			if(isset($seo->html->body)) $this->page['SEO_body'] = $seo->html->body;
+    	}
+
+        // Debug infos
+        $this->page['debug'] = $this->property('debug');
+        if($this->property('debug')){
+	        $this->page['domain'] = $this->property('domain');            		# magazine domain name
+	        $this->page['param'] = $param;                 						# current url parameter
+	        $this->page['feedlimit'] = $this->property('feedlimit');      		# enable/disable feedlimit
+	        $this->page['tag'] = $this->property('tag');      					# Tag
+	        $this->page['seoserver'] = $this->property('seoserver');      		# URL to SEO server
+	        $this->page['cdnserver'] = $this->property('cdnserver');      		# URL to CDN server
+	        $this->page['versionserver'] = $this->property('versionserver');    # URL to Version server
         }
     }
-    
+
     /***************************************
 	 * C A C H E  F U N C T I O N S
 	 ***************************************/
-	 
-	// Fetch and remember
-	public function fetchAndRemember($minutes, $environment, $type){
-		
-		$key = '';
-		$url = '';
-		
-		switch($type){
-			
-			case 'version':
-				$key = 'styla_CDN_version';
-				
-				if($environment == 'live'){
-					$url = 'http://live.styla.com/api/version/'.$this->property('domain');
-				}
-				else{
-					$url = 'http://stage.styla.com/api/version/'.$this->property('domain');
-				}
-				break;
-			
-			case 'magazine':
-				$key = 'styla_SEO_magazine';
-				
-				if($environment == 'live'){
-					$url = 'http://seo.styla.com/clients/'.$this->property('domain').'?url=user%2F'.$this->property('domain');
-				}
-				else{
-					$url = 'http://seoapistage1.magalog.net/clients/'.$this->property('domain').'?url=user%2F'.$this->property('domain');
-				}
-				break;
-				
-			case 'story':
-			
-				$key = 'styla_SEO_story_'.substr($this->page['param'], -6); // create cache key with story ID
-			
-				if($environment == 'live'){
-					$url = 'http://seo.styla.com/clients/'.$this->property('domain').'?url=story%2F'.$this->page['param'];
-				}
-				else{
-					$url = 'http://seoapistage1.magalog.net/clients/'.$this->property('domain').'?url=story%2F'.$this->page['param'];
-				}
-				break;
-			
-			case 'tag':
-				
-				$key = 'styla_SEO_tag_'.$this->page['param'];
-			
-				if($environment == 'live'){
-					$url = 'http://seo.styla.com/clients/'.$this->property('domain').'?url=tag%2F'.$this->property('param');
-				}
-				else{
-					$url = 'http://seoapistage1.magalog.net/clients/'.$this->property('domain').'?url=tag%2F'.$this->page['param'];
-				}
-				break;
-			
-			default: break;
+
+	// Fetch and remember SEO information
+	public function fetchAndRememberSEO( $key ){
+
+		if($this->property('debug')){
+			$this->page['url'] = $this->property('seoserver').$this->property('domain').'?url='.$key;
+			$this->page['key'] = 'styla_SEO_'.$key;
 		}
-		
-		$value = Cache::remember($key, $minutes, function() use($url){
-		    return @file_get_contents($url);
+
+		// Check if SEO data is already in cache, if yes, return the cached data
+		if(Cache::has('styla_SEO_'.$key)){
+			if($this->property('debug')){
+				$this->page['readFromServer'] = 'false';
+			}
+
+			return Cache::get('styla_SEO_'.$key);
+		}
+		else{
+			if($this->property('debug')){
+				$this->page['readFromServer'] = 'true';
+			}
+
+			// Fetch data from server
+			$data = @file_get_contents($this->property('seoserver').$this->property('domain').'?url='.$key);
+
+			// Check if any data was received
+			if($data != FALSE){
+				// JSON decode
+            	$json = json_decode($data);
+
+            	// Check if json has status code
+				if(!isset($json->status)){
+	            	return 'Styla Plugin: No status code in SEO response.';
+            	}
+
+            	// check if response code is 2XX
+            	if(substr((string)$json->status, 0, 1) == '2'){
+
+	            	// if no expire is present, default to 60min
+	            	$expire = isset($json->expire) ? $json->expire / 60 : 60;
+
+	            	// Save JSON to Cache
+					Cache::put('styla_SEO_'.$key, $json, $expire);
+
+					if($this->property('debug')){
+			            $this->page['status'] = $json->status; 	# SEO response status code
+			            $this->page['duration'] = $expire;   	# Caching duration
+		            }
+
+					// Return the JSON
+					return $json;
+				}
+				else{
+		            return 'Styla Plugin: Status code is not 2XX: '.$json->status;
+	            }
+	        }
+	        else{
+		        return 'Styla Plugin: No data received from SEO API.';
+	        }
+		}
+	}
+
+	// Fetch and remember SEO information
+	public function fetchAndRememberCdnVersion(){
+
+		$version = Cache::remember('CDN_version', 60, function(){
+		    return @file_get_contents($this->property('versionserver').$this->property('domain'));
 		});
-		
-		/*
-			// DEBUG
-			$this->page['url'] = $url;
-			$this->page['key'] = $key;
-			$this->page['minutes'] = $minutes;
-			$this->page['cache_env'] = $environment;
-			$this->page['cache_type'] = $type;
-		*/
-		
-		return $value;
-		
+
+		if($this->property('debug')){
+			$this->page['version'] = $version;
+		}
+
+		return $version;
 	}
 }
