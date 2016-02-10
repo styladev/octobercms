@@ -1,0 +1,18 @@
+{# Magazine Integration ----------- #}
+
+{% if integration == 'snippet' %}
+    {{ Preloader|raw }}
+{% else %}
+    {% put head %}
+        {{ Script|raw }}
+        {{ Styles|raw }}
+    {% endput %}
+    <div id="stylaMagazine" {% if feedlimit %}data-feedlimit="{{ feedlimit }}"{% endif %}></div>
+{% endif %}
+
+{# SEO content -------------------- #}
+
+{% put head %}
+    {{ SEO_head|raw }}
+{% endput %}
+{{ SEO_body|raw }}
