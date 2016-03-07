@@ -71,13 +71,20 @@ class Magazine extends ComponentBase
                 'type'              => 'string',
                 'showExternalParam' => false
             ],
+            'caching' => [
+                'description'       => 'Enables caching of SEO and version information.',
+                'title'             => 'Enable Caching',
+                'default'           => true,
+                'type'              => 'checkbox',
+                'showExternalParam' => false
+            ],
             'debug' => [
                 'description'       => 'Displays DEBUG information above the magazine.',
                 'title'             => 'Debug',
                 'default'           => false,
                 'type'              => 'checkbox',
                 'showExternalParam' => false
-            ],
+            ]
         ];
     }
 
@@ -86,6 +93,8 @@ class Magazine extends ComponentBase
 	    $version = ''; // version of the script and styles received from CDN
 	    $feedlimit = $this->property('feedlimit');
 	    $tag = $this->property('tag');
+
+        $this->page['caching'] = $this->property('caching');
 
 	    // --- Set file_get_contents Timeout to 10s -------
 	    ini_set('default_socket_timeout', 10);
@@ -123,6 +132,7 @@ class Magazine extends ComponentBase
 	        $this->page['seoserver'] = $this->property('seoserver');      		# URL to SEO server
 	        $this->page['cdnserver'] = $this->property('cdnserver');      		# URL to CDN server
 	        $this->page['versionserver'] = $this->property('versionserver');    # URL to Version server
+            $this->page['caching'] = $this->property('caching');                # Cache disabled
         }
     }
 
@@ -139,7 +149,7 @@ class Magazine extends ComponentBase
 		}
 
 		// Check if SEO data is already in cache, if yes, return the cached data
-		if(Cache::has('styla_SEO_'.$key)){
+		if(Cache::has('styla_SEO_'.$key) && $this->property('caching')){
 			if($this->property('debug')){
 				$this->page['readFromServer'] = 'false';
 			}
@@ -194,9 +204,14 @@ class Magazine extends ComponentBase
 	// Fetch and remember SEO information
 	public function fetchAndRememberCdnVersion(){
 
-		$version = Cache::remember('CDN_version', 60, function(){
-		    return @file_get_contents($this->property('versionserver').$this->property('domain'));
-		});
+        if($this->property('caching')){
+    		$version = Cache::remember('CDN_version', 60, function(){
+    		    return @file_get_contents($this->property('versionserver').$this->property('domain'));
+    		});
+        }
+        else{
+            $version = @file_get_contents($this->property('versionserver').$this->property('domain'));
+        }
 
 		if($this->property('debug')){
 			$this->page['version'] = $version;

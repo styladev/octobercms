@@ -15,3 +15,5 @@
     - Now using the default caching system set in config/cache.php
     - Cache expiration now set via SEO API
     - Only two pages required now - one for the magazine /rootPath and one wildcard rootPath/*
+1.5.1:
+    - Added a switch to enable or disable Caching
