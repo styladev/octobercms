@@ -145,16 +145,16 @@ class Magazine extends ComponentBase
 
 		if($this->property('debug')){
 			$this->page['url'] = $this->property('seoserver').$this->property('domain').'?url='.$key;
-			$this->page['key'] = 'styla_SEO_'.$key;
+			$this->page['key'] = 'styla_SEO_'.$key.'_'.$this->property('domain');
 		}
 
 		// Check if SEO data is already in cache, if yes, return the cached data
-		if(Cache::has('styla_SEO_'.$key) && $this->property('caching')){
+		if(Cache::has('styla_SEO_'.$key.'_'.$this->property('domain')) && $this->property('caching')){
 			if($this->property('debug')){
 				$this->page['readFromServer'] = 'false';
 			}
 
-			return Cache::get('styla_SEO_'.$key);
+			return Cache::get('styla_SEO_'.$key.'_'.$this->property('domain'));
 		}
 		else{
 			if($this->property('debug')){
@@ -181,7 +181,7 @@ class Magazine extends ComponentBase
 	            	$expire = isset($json->expire) ? $json->expire / 60 : 60;
 
 	            	// Save JSON to Cache
-					Cache::put('styla_SEO_'.$key, $json, $expire);
+					Cache::put('styla_SEO_'.$key.'_'.$this->property('domain'), $json, $expire);
 
 					if($this->property('debug')){
 			            $this->page['status'] = $json->status; 	# SEO response status code

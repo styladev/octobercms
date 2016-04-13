@@ -17,3 +17,6 @@
     - Only two pages required now - one for the magazine /rootPath and one wildcard rootPath/*
 1.5.1:
     - Added a switch to enable or disable Caching
+1.5.2:
+    - Added domain name to caching keys to make them more unique
+    - prevents keys from being overwritten when multiple magazines are running on the same page
