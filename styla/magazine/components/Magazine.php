@@ -119,7 +119,7 @@ class Magazine extends ComponentBase
 
     	if(is_object( $seo )){
             if(isset($seo->html->head)) $this->page['SEO_head'] = $seo->html->head;
-			if(isset($seo->html->body)) $this->page['SEO_body'] = $seo->html->body;
+			if(isset($seo->html->body)) $this->page['SEO_body'] = $this->removeNoScript($seo->html->body);
     	}
 
         // Debug infos
@@ -219,4 +219,17 @@ class Magazine extends ComponentBase
 
 		return $version;
 	}
+
+    /***************************************
+	 * H E L P E R  F U N C T I O N S
+	 ***************************************/
+
+     public function removeNoScript($body){
+
+
+         $regexp = "#<noscript>(.*?)</noscript>#s";
+         preg_match($regexp ,$body, $content);
+
+         return '<div id="stylaSEO">'.$content[1].'<noscript><style type=\"text/css\">#stylaSEO { display: block !important; }</style></noscript></div>';
+     }
 }
