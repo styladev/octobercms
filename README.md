@@ -2,7 +2,7 @@
 
 ## Integration
 
-In order to fill a magazine page created within OctoberCMS with crawlable content a component must be attached to the magazine page. This solution is based on the [Plugin Documentation v2.0.1](https://docs.google.com/document/d/19FtUhlP0iiUZe_4NSGUMIDOLRmRPRHFbT-HyyRc8ejs/edit).
+In order to fill a magazine page created within OctoberCMS with crawlable content a component must be attached to the magazine page. This solution is based on the official [Plugin Documentation](https://docs.google.com/document/d/19FtUhlP0iiUZe_4NSGUMIDOLRmRPRHFbT-HyyRc8ejs/edit).
 
 ## Installation
 
