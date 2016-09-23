@@ -28,7 +28,7 @@ class Magazine extends ComponentBase
             'cdnserver' => [
                 'description'       => 'Server that delivers the script and styles for the magazine.',
                 'title'             => 'CDN server',
-                'default'           => 'http://cdn.styla.com',
+                'default'           => 'http://cdn.styla.com/',
                 'type'              => 'string',
                 'validationPattern' => '(https?:\/\/)([\da-z\.-]+)([\/\w \.-]*)*\/',
                 'validationMessage' => 'URL must begin with http(s):// and end with a trailing slash',
@@ -38,7 +38,7 @@ class Magazine extends ComponentBase
             'seoserver' => [
                 'description'       => 'Server that delivers SEO information for the magazine.',
                 'title'             => 'SEO server',
-                'default'           => 'http://seo.styla.com',
+                'default'           => 'http://seo.styla.com/',
                 'type'              => 'string',
                 'validationPattern' => '(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/',
                 'validationMessage' => 'URL must begin with http(s):// and end with a trailing slash',
@@ -48,7 +48,7 @@ class Magazine extends ComponentBase
             'versionserver' => [
 	        	'description'		=> 'Server that delivers the current script and styles version number',
 	        	'title'				=> 'Version server',
-	        	'default'			=> 'http://live.styla.com',
+	        	'default'			=> 'http://live.styla.com/',
 	        	'type'				=> 'string',
 	        	'validationPattern' => '(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/',
                 'validationMessage' => 'URL must begin with http(s):// and end with a trailing slash',
