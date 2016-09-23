@@ -20,3 +20,7 @@
 1.5.2:
     - Added domain name to caching keys to make them more unique
     - prevents keys from being overwritten when multiple magazines are running on the same page
+1.5.3:
+    - Now considering ?offset= url query parameter for SEO pagination
+    - Fixed caching duration for SEO information (60min)
+    - Simplified plugin server settings
