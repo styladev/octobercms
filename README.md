@@ -28,8 +28,8 @@ The setup of the folder integration can also completely be done from within the 
 1. `Alias` – __required__, default: `Magazine` – the internal name which OctoberCMS will use to load the component
 2. `Domain` – __required__ – the domain of the desired magazine
 3. `CDN Server` – __required__, default: `http://cdn.styla.com/` – the server that provides the necessary scripts and styles for the magazine
-4. `SEO Server` – __required__, default: `http://seo.styla.com/clients/` – the server that provides SEO information for the magazine
-5. `Version Server` – __required__, default: `http://live.styla.com/api/version/` – the server that provides the latest version number of the scripts and styles for the magazine
+4. `SEO Server` – __required__, default: `http://seo.styla.com/` – the server that provides SEO information for the magazine
+5. `Version Server` – __required__, default: `http://live.styla.com/` – the server that provides the latest version number of the scripts and styles for the magazine
 6. `Feedlimit` – _optional_, the amount of stories to be shown in the magazine, adds the `data-feedlimit` attribute
 7. `Tag` – _optional_, the magazine will only show stories with the specified tag, adds the `data-tag` attribute
 8. `Debug`– _optional_, when enabled Debug information will be displayed above the magazine

@@ -28,7 +28,7 @@ class Magazine extends ComponentBase
             'cdnserver' => [
                 'description'       => 'Server that delivers the script and styles for the magazine.',
                 'title'             => 'CDN server',
-                'default'           => 'http://cdn.styla.com/',
+                'default'           => 'http://cdn.styla.com',
                 'type'              => 'string',
                 'validationPattern' => '(https?:\/\/)([\da-z\.-]+)([\/\w \.-]*)*\/',
                 'validationMessage' => 'URL must begin with http(s):// and end with a trailing slash',
@@ -38,7 +38,7 @@ class Magazine extends ComponentBase
             'seoserver' => [
                 'description'       => 'Server that delivers SEO information for the magazine.',
                 'title'             => 'SEO server',
-                'default'           => 'http://seo.styla.com/clients/',
+                'default'           => 'http://seo.styla.com',
                 'type'              => 'string',
                 'validationPattern' => '(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/',
                 'validationMessage' => 'URL must begin with http(s):// and end with a trailing slash',
@@ -48,7 +48,7 @@ class Magazine extends ComponentBase
             'versionserver' => [
 	        	'description'		=> 'Server that delivers the current script and styles version number',
 	        	'title'				=> 'Version server',
-	        	'default'			=> 'http://live.styla.com/api/version/',
+	        	'default'			=> 'http://live.styla.com',
 	        	'type'				=> 'string',
 	        	'validationPattern' => '(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/',
                 'validationMessage' => 'URL must begin with http(s):// and end with a trailing slash',
@@ -115,7 +115,9 @@ class Magazine extends ComponentBase
         // --- Fetch SEO content --------------------------
 
         $param = $this->param('param') ? $this->param('param') : '/';
-    	$seo = $this->fetchAndRememberSEO( $param );
+        $offset = input('offset');
+        $param = isset($offset) ? $param.'?offset='.$offset : $param;
+        $seo = $this->fetchAndRememberSEO( $param );
 
     	if(is_object( $seo )){
             if(isset($seo->html->head)) $this->page['SEO_head'] = $seo->html->head;
@@ -144,7 +146,7 @@ class Magazine extends ComponentBase
 	public function fetchAndRememberSEO( $key ){
 
 		if($this->property('debug')){
-			$this->page['url'] = $this->property('seoserver').$this->property('domain').'?url='.$key;
+			$this->page['url'] = $this->property('seoserver').'clients/'.$this->property('domain').'?url='.$key;
 			$this->page['key'] = 'styla_SEO_'.$key.'_'.$this->property('domain');
 		}
 
@@ -162,7 +164,8 @@ class Magazine extends ComponentBase
 			}
 
 			// Fetch data from server
-			$data = @file_get_contents($this->property('seoserver').$this->property('domain').'?url='.$key);
+            $seoRequestUrl = $this->property('seoserver').'clients/'.$this->property('domain').'?url='.$key;
+			$data = @file_get_contents($seoRequestUrl);
 
 			// Check if any data was received
 			if($data != FALSE){
@@ -177,8 +180,7 @@ class Magazine extends ComponentBase
             	// check if response code is 2XX
             	if(substr((string)$json->status, 0, 1) == '2'){
 
-	            	// if no expire is present, default to 60min
-	            	$expire = isset($json->expire) ? $json->expire / 60 : 60;
+	            	$expire = 60; // 60min
 
 	            	// Save JSON to Cache
 					Cache::put('styla_SEO_'.$key.'_'.$this->property('domain'), $json, $expire);
@@ -206,11 +208,11 @@ class Magazine extends ComponentBase
 
         if($this->property('caching')){
     		$version = Cache::remember('CDN_version', 60, function(){
-    		    return @file_get_contents($this->property('versionserver').$this->property('domain'));
+    		    return @file_get_contents($this->property('versionserver').'api/version/'.$this->property('domain'));
     		});
         }
         else{
-            $version = @file_get_contents($this->property('versionserver').$this->property('domain'));
+            $version = @file_get_contents($this->property('versionserver').'api/version/'.$this->property('domain'));
         }
 
 		if($this->property('debug')){
