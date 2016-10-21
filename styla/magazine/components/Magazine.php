@@ -194,11 +194,8 @@ class Magazine extends ComponentBase
 					return $json;
 				}
 				else{
-		            return 'Styla Plugin: Status code is not 2XX: '.$json->status;
+                    return \Response::make($this->controller->run('404'), 404);
 	            }
-	        }
-	        else{
-		        return 'Styla Plugin: No data received from SEO API.';
 	        }
 		}
 	}
