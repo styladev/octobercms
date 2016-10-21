@@ -24,3 +24,5 @@
     - Now considering ?offset= url query parameter for SEO pagination
     - Fixed caching duration for SEO information (60min)
     - Simplified plugin server settings
+1.5.4:
+    - Added 404 status code response for non existent content
