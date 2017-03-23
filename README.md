@@ -1,5 +1,7 @@
 # OctoberCMS Styla Plugin Integration
 
+This OctoberCMS plugin provides the SEO and Routing functionality for a Styla magazine. The first diagram on [this page](https://styladocs.atlassian.net/wiki/spaces/CO/pages/9961481/Technical+Integration) should provide you an overview of what the plugin does and how it exchanges data with Styla. 
+
 ## Integration
 
 In order to fill a magazine page created within OctoberCMS with crawlable content a component must be attached to the magazine page. This solution is based on the official [Plugin Documentation](https://docs.google.com/document/d/19FtUhlP0iiUZe_4NSGUMIDOLRmRPRHFbT-HyyRc8ejs/edit).
