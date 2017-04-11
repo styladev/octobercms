@@ -10,6 +10,8 @@ The first step is installing the plugin by copying the `/styla` folder to the `/
 
 ![Plugin](http://i.imgur.com/9Lh4agF.png)
 
+### Please do not create any subpages in your CMS or directories for your magazine. The plugin itself will take care of setting up the /magazine/ (or any other) page on which the magazine will appear and of the roouting as well. 
+
 ## Setup
 
 The setup of the folder integration can also completely be done from within the OctoberCMS Backend Interface.
