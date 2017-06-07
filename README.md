@@ -4,15 +4,13 @@ This OctoberCMS plugin provides the SEO and Routing functionality for a Styla ma
 
 ## Integration
 
-In order to fill a magazine page created within OctoberCMS with crawlable content a component must be attached to the magazine page. This solution is based on the official [Plugin Documentation](https://docs.google.com/document/d/19FtUhlP0iiUZe_4NSGUMIDOLRmRPRHFbT-HyyRc8ejs/edit).
+In order to fill a magazine page created within OctoberCMS with crawlable content a component must be attached to the magazine page.
 
 ## Installation
 
 The first step is installing the plugin by copying the `/styla` folder to the `/plugins` directory. That's it already. You should now see the `Magazine` plugin in the OctoberCMS Backend:
 
 ![Plugin](http://i.imgur.com/9Lh4agF.png)
-
-### Please do not create any subpages in your CMS or directories for your magazine. The plugin itself will take care of setting up the /magazine/ (or any other) page on which the magazine will appear and of the roouting as well. 
 
 ## Setup
 

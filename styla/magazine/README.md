@@ -2,7 +2,7 @@
 
 ## Integration
 
-In order to fill a magazine page created within OctoberCMS with crawlable content a component must be attached to the magazine page. This solution is based on the [Plugin Documentation v2.0.1](https://docs.google.com/document/d/19FtUhlP0iiUZe_4NSGUMIDOLRmRPRHFbT-HyyRc8ejs/edit).
+In order to fill a magazine page created within OctoberCMS with crawlable content a component must be attached to the magazine page. 
 
 ## Installation
 
@@ -24,8 +24,6 @@ Tag: http://example.com/magazine/tag/:param?
 * Drag & drop the plugin from the components section to your pages code section.
 * Place the following line where the magazine should appear on the site: `{% component 'Magazine' %}`
 * Click on the component and set the _`domain`_ (domain of client) 
-* Set _`type`_ according to the above URL: _Magazine_ (/magazine or other routes with the whole magazine), _Story_ (/story/*), or _Tag_ (/tag/*)
-* Set _`integration`_ to the type of integration you want to use (snippet or CDN integration)
 * _optional_: If you want to limit the feed to a certain amount of pages, write a number into the _`feedlimit`_ field. 
 * Hit `[ENTER]` or just close the component settings to confirm.
 * The above code will write code to the `head` and `body` placeholders in your layout file.
@@ -34,7 +32,7 @@ Tag: http://example.com/magazine/tag/:param?
 
 With everything set up, a simple magazine page could look like this:
 
-![Screenshot](http://www.styla.com/storage/app/media/Tutorial%20images/Screenshot%202015-08-10%2012.27.36.png)
+![Screenshot](http://i.imgur.com/SkSnQGt.png)
 
 _Reminder:_ In order for the plugin to work, the domain settings of a client need to look something like this:
 
